@@ -9,12 +9,12 @@ __status__ = "Tests"
 
 '''
 
-import re
 import os
 import sys
 import json
 import string
 import random
+import time
 import tkinter as tk
 from tkinter import simpledialog
 '''
@@ -22,15 +22,19 @@ generates a password with
 with no duplicate characters in the password
 '''
 
-Easy = string.ascii_letters
-Medium = string.ascii_letters + string.punctuation
-Hard = string.ascii_letters + string.punctuation + string.digits
-numbers = list(range(1, 93))
+complexity = \
+    {
+    'Easy' : string.ascii_letters,
+    'Medium': string.ascii_letters + string.punctuation,
+    'Hard' : string.ascii_letters + string.punctuation + string.digits,
+    'numbers' : list(range(1, 93))
+     }
+
+
 fail_message = " \t not a valid option ! try again \n"
 CRED = '\033[91m'
 CEND = '\033[1m'
 
-# password_complexity = [Easy,Medium,Hard]
 
 '''
 # window = tk.Tk()
@@ -50,6 +54,7 @@ CEND = '\033[1m'
 #
 '''
 
+
 def password_generator():
     """
     :return:
@@ -59,19 +64,21 @@ def password_generator():
 
         allowed = ['Easy','Medium','Hard']
         allowed_lower = (list(map(lambda x:x.lower(),allowed)))
-        user_char_complexity = input ("Password Complexity (Easy/Medium/Hard) :  ")
+        time.sleep(0.5)
+        user_char_complexity = input (CRED+"Password Complexity (Easy/Medium/Hard) :  "+CEND)
+        user_char_complexity = user_char_complexity.lower()
         if user_char_complexity in allowed_lower or allowed:
             if user_char_complexity == 'easy' :
-                user_char_complexity = Easy
-                difficulty = 'Easy'
+                user_char_complexity = complexity.get('Easy')
+                difficulty = allowed[0]
 
             elif user_char_complexity == 'medium' :
-                user_char_complexity = Medium
-                difficulty = 'Medium'
+                user_char_complexity = complexity.get('Medium')
+                difficulty = allowed[1]
 
             elif user_char_complexity == 'hard' :
-                user_char_complexity = Hard
-                difficulty = 'Hard'
+                user_char_complexity = complexity.get('Hard')
+                difficulty = allowed[2]
 
             elif user_char_complexity == 'exit' :
                 print ('you chose to exit')
@@ -82,14 +89,15 @@ def password_generator():
                 continue
         else:
             print(CRED + fail_message + CEND)
+
             continue
 
         while var == 1:
             try:
                 password_length = int(input ("Password Length (1-90):  "))
-                if password_length in numbers:
+                if password_length in complexity.get('numbers'):
                     password =  "".join(random.sample(user_char_complexity,password_length ))
-                    password_output = 'your generated password is : ', password
+                    password_output = 'your generated password is : {} \n'.format(password)
                     print (password_output)
                     if not os.path.exists('directory'):
                         os.makedirs('directory')
@@ -113,5 +121,6 @@ def password_generator():
             # compile with CX_FREEZE
 
 if __name__ == '__main__':
+    print('\nPassWord_Generator V1.0 started...\n')
+    time.sleep(1)
     password_generator()
-    print('PassWord_Generator V1.0 started...')
