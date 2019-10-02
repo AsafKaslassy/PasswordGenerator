@@ -15,6 +15,7 @@ import json
 import string
 import random
 import time
+import pprint
 import tkinter as tk
 from tkinter import simpledialog
 '''
@@ -24,14 +25,14 @@ with no duplicate characters in the password
 
 complexity = \
     {
-    'Easy' : string.ascii_letters,
+    'Easy' :  string.ascii_letters,
     'Medium': string.ascii_letters + string.punctuation,
-    'Hard' : string.ascii_letters + string.punctuation + string.digits,
+    'Hard' :  string.ascii_letters + string.punctuation + string.digits,
     'numbers' : list(range(1, 93))
      }
 
 
-fail_message = " \t not a valid option ! try again \n"
+fail_message = "not a valid option ! try again"
 CRED = '\033[91m'
 CEND = '\033[1m'
 
@@ -65,7 +66,7 @@ def password_generator():
         allowed = ['Easy','Medium','Hard']
         allowed_lower = (list(map(lambda x:x.lower(),allowed)))
         time.sleep(0.5)
-        user_char_complexity = input (CRED+"Password Complexity (Easy/Medium/Hard) :  "+CEND)
+        user_char_complexity = input ("Password Complexity (Easy/Medium/Hard) :  ")
         user_char_complexity = user_char_complexity.lower()
         if user_char_complexity in allowed_lower or allowed:
             if user_char_complexity == 'easy' :
@@ -85,30 +86,37 @@ def password_generator():
                 sys.exit()
 
             else:
-                print(CRED + fail_message + CEND)
+                print(fail_message )
                 continue
         else:
-            print(CRED + fail_message + CEND)
+            print( fail_message)
 
             continue
 
         while var == 1:
             try:
                 password_length = int(input ("Password Length (1-90):  "))
-                if password_length in complexity.get('numbers'):
-                    password =  "".join(random.sample(user_char_complexity,password_length ))
-                    password_output = 'your generated password is : {} \n'.format(password)
-                    print (password_output)
-                    if not os.path.exists('directory'):
-                        os.makedirs('directory')
-                    with open('generated_password.txt', 'a') as outfile:
-                        outfile.writelines('difficulty: '+ difficulty + ', ')
-                        json.dump(password_output , outfile)
-                        outfile.write('\n')
 
-                    break
+                if password_length in complexity.get('numbers'):
+                    if password_length < 80 :
+                        if password_length != '0'  :
+                            password =  "".join(random.sample(user_char_complexity,password_length ))
+                            password_output = 'your generated password is : {} \n'.format(password)
+                            print (password_output)
+                            if not os.path.exists('directory'):
+                                os.makedirs('directory')
+                            with open('generated_password.txt', 'a') as outfile:
+                                outfile.writelines('difficulty: '+ difficulty + ', ')
+                                json.dump(password_output , outfile)
+                                outfile.write('\n')
+
+                            break
+                        else:
+                            print(password_length , "is invalid , try again")
+                    else:
+                        print(password_length , "is greater than the threshold , try again")
             except ValueError:
-                print(CRED + fail_message + CEND)
+                print(fail_message)
                 continue
 
             # TODO:
@@ -122,5 +130,4 @@ def password_generator():
 
 if __name__ == '__main__':
     print('\nPassWord_Generator V1.0 started...\n')
-    time.sleep(1)
     password_generator()
